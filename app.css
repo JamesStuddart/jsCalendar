@@ -1,0 +1,23 @@
+﻿body {
+    font-family: 'Segoe UI', sans-serif;
+    padding-top: 70px;
+    padding-bottom: 30px;
+}
+
+span {
+    font-style: italic;
+}
+
+.disabled-cal-cell {
+    background: #eeeeee;
+}
+
+.cal-cell {
+    height: 100px;
+    vertical-align: top;
+}
+
+.jsCalendar {
+    box-shadow: 0 0 10px #ccc !important;
+    margin-top: 10px;
+}
