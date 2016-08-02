@@ -21,3 +21,51 @@ span {
     box-shadow: 0 0 10px #ccc !important;
     margin-top: 10px;
 }
+
+.event {
+    clear: both;
+    display: block !important;
+}
+
+.event-day {
+    
+    border-radius: .25em;
+}
+
+.event-firstday {
+    margin-right: -11px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: .25em;
+    border-bottom-left-radius: .25em;
+}
+
+.event-lastday {
+
+    border-top-right-radius: .25em;
+    border-bottom-right-radius: .25em;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.event-middleday {
+    margin-right: -11px;
+    margin-left: -11px;
+    border-radius: 0;
+}
+
+.event-day,
+.event-firstday,
+.event-lastday,
+.event-middleday {
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #ffffff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    background-color: #337ab7;
+    margin-top: 3px;
+}

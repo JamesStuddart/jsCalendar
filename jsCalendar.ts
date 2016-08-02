@@ -3,6 +3,13 @@
     Monday = 2
 }
 
+class JsEvent {
+    eventName: string;
+    startDate: Date;
+    endDate: Date;
+}
+
+
 class JsCalendar {
     parentControl: HTMLElement;
     firstDay: number;
@@ -187,6 +194,14 @@ class JsCalendar {
                             dayCell.className = 'col-md-1 cal-cell text-right';
                         }
 
+                        //check for events
+                        let events = this.getEvents(new Date(this.firstDate.getFullYear(), this.firstDate.getMonth(), (thisDate - this.firstDay + 1)));
+                        console.log(events);
+                        if (events.length > 0) {
+                            this.addEvents(dayCell, events, new Date(this.firstDate.getFullYear(), this.firstDate.getMonth(), (thisDate - this.firstDay + 1)));
+                        }
+
+
                         usedCells++;
                     }
 
@@ -210,6 +225,77 @@ class JsCalendar {
         panel.appendChild(panelBody);
 
         return panel;
+    }
+
+    private getEvents(dayDate: Date) {
+
+        let thisDate = new Date();
+
+        //read in events for this month here...
+
+        let event1 = new JsEvent();
+        event1.eventName = "Test Event 1";
+        event1.startDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() - 1);
+        event1.endDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() + 1);
+
+        let event2 = new JsEvent();
+        event2.eventName = "Test Event 2";
+        event2.startDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() - 10);
+        event2.endDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() - 10);
+
+        let event3 = new JsEvent();
+        event3.eventName = "Test Event 3";
+        event3.startDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() - 1);
+        event3.endDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() -1);
+
+
+        let events = [event1, event2, event3];
+        console.log(events);
+        //return valid dates for this date
+        return events.filter(x => (new Date(x.startDate.getFullYear(), x.startDate.getMonth(), x.startDate.getDate()).getTime() === dayDate.getTime() ||
+            new Date(x.endDate.getFullYear(), x.endDate.getMonth(), x.endDate.getDate()).getTime() === dayDate.getTime()
+            || (new Date(x.startDate.getFullYear(), x.startDate.getMonth(), x.startDate.getDate()).getTime() < dayDate.getTime() && new Date(x.endDate.getFullYear(), x.endDate.getMonth(), x.endDate.getDate()).getTime() > dayDate.getTime())
+        ));
+    }
+
+    private addEvents(dayCell: HTMLTableCellElement, events: JsEvent[], dayDate: Date) {
+
+        for (let i = 0; i < events.length; i++) {
+            let event = events[i];
+            let spnEvent = document.createElement('span');
+            spnEvent.className = 'event ';
+
+
+
+            if (new Date(event.startDate.getFullYear(), event.startDate.getMonth(), event.startDate.getDate()).getTime() !== new Date(event.endDate.getFullYear(), event.endDate.getMonth(), event.endDate.getDate()).getTime()) {
+
+                switch (dayDate.getTime()) {
+                    case new Date(event.startDate.getFullYear(), event.startDate.getMonth(), event.startDate.getDate()).getTime():
+                        spnEvent.className += 'event-firstday';
+                        spnEvent.innerText = (<JsEvent>event).eventName;
+
+                        break;
+                    case new Date(event.endDate.getFullYear(), event.endDate.getMonth(), event.endDate.getDate()).getTime():
+                        spnEvent.className += 'event-lastday';
+                        spnEvent.innerHTML = '&nbsp;';
+                        break;
+                    default:
+                        spnEvent.className += 'event-middleday';
+                        spnEvent.innerHTML = '&nbsp;';
+                }
+
+            } else {
+                spnEvent.className += 'event-day';
+                spnEvent.innerText = (<JsEvent>event).eventName;
+            }
+
+
+
+            dayCell.appendChild(spnEvent);
+
+        }
+
+
     }
 
     private dayName(day: number) {

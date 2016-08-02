@@ -3,6 +3,11 @@ var StartDay;
     StartDay[StartDay["Sunday"] = 1] = "Sunday";
     StartDay[StartDay["Monday"] = 2] = "Monday";
 })(StartDay || (StartDay = {}));
+var JsEvent = (function () {
+    function JsEvent() {
+    }
+    return JsEvent;
+}());
 var JsCalendar = (function () {
     function JsCalendar(parentControl) {
         if (parentControl === undefined || parentControl === null) {
@@ -126,6 +131,12 @@ var JsCalendar = (function () {
                         else {
                             dayCell.className = 'col-md-1 cal-cell text-right';
                         }
+                        //check for events
+                        var events = this.getEvents(new Date(this.firstDate.getFullYear(), this.firstDate.getMonth(), (thisDate - this.firstDay + 1)));
+                        console.log(events);
+                        if (events.length > 0) {
+                            this.addEvents(dayCell, events, new Date(this.firstDate.getFullYear(), this.firstDate.getMonth(), (thisDate - this.firstDay + 1)));
+                        }
                         usedCells++;
                     }
                     thisDate++;
@@ -142,6 +153,55 @@ var JsCalendar = (function () {
         panelBody.appendChild(table);
         panel.appendChild(panelBody);
         return panel;
+    };
+    JsCalendar.prototype.getEvents = function (dayDate) {
+        var thisDate = new Date();
+        //read in events for this month here...
+        var event1 = new JsEvent();
+        event1.eventName = "Test Event 1";
+        event1.startDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() - 1);
+        event1.endDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() + 1);
+        var event2 = new JsEvent();
+        event2.eventName = "Test Event 2";
+        event2.startDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() - 10);
+        event2.endDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() - 10);
+        var event3 = new JsEvent();
+        event3.eventName = "Test Event 3";
+        event3.startDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() - 1);
+        event3.endDate = new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate() - 1);
+        var events = [event1, event2, event3];
+        console.log(events);
+        //return valid dates for this date
+        return events.filter(function (x) { return (new Date(x.startDate.getFullYear(), x.startDate.getMonth(), x.startDate.getDate()).getTime() === dayDate.getTime() ||
+            new Date(x.endDate.getFullYear(), x.endDate.getMonth(), x.endDate.getDate()).getTime() === dayDate.getTime()
+            || (new Date(x.startDate.getFullYear(), x.startDate.getMonth(), x.startDate.getDate()).getTime() < dayDate.getTime() && new Date(x.endDate.getFullYear(), x.endDate.getMonth(), x.endDate.getDate()).getTime() > dayDate.getTime())); });
+    };
+    JsCalendar.prototype.addEvents = function (dayCell, events, dayDate) {
+        for (var i = 0; i < events.length; i++) {
+            var event_1 = events[i];
+            var spnEvent = document.createElement('span');
+            spnEvent.className = 'event ';
+            if (new Date(event_1.startDate.getFullYear(), event_1.startDate.getMonth(), event_1.startDate.getDate()).getTime() !== new Date(event_1.endDate.getFullYear(), event_1.endDate.getMonth(), event_1.endDate.getDate()).getTime()) {
+                switch (dayDate.getTime()) {
+                    case new Date(event_1.startDate.getFullYear(), event_1.startDate.getMonth(), event_1.startDate.getDate()).getTime():
+                        spnEvent.className += 'event-firstday';
+                        spnEvent.innerText = event_1.eventName;
+                        break;
+                    case new Date(event_1.endDate.getFullYear(), event_1.endDate.getMonth(), event_1.endDate.getDate()).getTime():
+                        spnEvent.className += 'event-lastday';
+                        spnEvent.innerHTML = '&nbsp;';
+                        break;
+                    default:
+                        spnEvent.className += 'event-middleday';
+                        spnEvent.innerHTML = '&nbsp;';
+                }
+            }
+            else {
+                spnEvent.className += 'event-day';
+                spnEvent.innerText = event_1.eventName;
+            }
+            dayCell.appendChild(spnEvent);
+        }
     };
     JsCalendar.prototype.dayName = function (day) {
         return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day];
